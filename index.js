@@ -2,6 +2,7 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const app = express()
+const jwt = require('jsonwebtoken')
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -53,10 +54,21 @@ async function run() {
     app.delete('/users/:id', async (req, res) => {
       const id = req.params.id
       const query = { _id: new ObjectId(id) }
-      const result = await cartCollection.deleteOne(query)
+      const result = await userCollection.deleteOne(query)
       res.send(result)
     })
-    
+    // manage admin role 
+    app.patch('/users/admin/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $set: {
+          role:'admin'
+        }
+      }
+      const result = await userCollection.updateOne(query, updateDoc)
+      res.send(result)
+    })
 
     // food items  menu 
     app.get('/menu', async (req, res) => {
