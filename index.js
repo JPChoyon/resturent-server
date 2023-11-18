@@ -33,6 +33,10 @@ async function run() {
     const userCollection = client.db("bistroDB").collection("users");
 
     // mange user
+    app.get('/users', async (req, res) => {
+      const result = await userCollection.find().toArray()
+      res.send(result)
+    })
     app.post('/users', async (req, res) => {
       const user = req.body;
       const query = { email: user.email }
@@ -41,10 +45,17 @@ async function run() {
         return res.send({message:'user already exits'} );
       }
       else {
-        const result = await userCollection.insertOne(query)
+        const result = await userCollection.insertOne(user)
         res.send(result)
       }
-})
+    })
+    
+    app.delete('/users/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await cartCollection.deleteOne(query)
+      res.send(result)
+    })
     
 
     // food items  menu 
