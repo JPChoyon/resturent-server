@@ -30,6 +30,22 @@ async function run() {
     const menuCollection = client.db("bistroDB").collection("menu");
     const reviewCollection = client.db("bistroDB").collection("reviews");
     const cartCollection = client.db("bistroDB").collection("cart");
+    const userCollection = client.db("bistroDB").collection("users");
+
+    // mange user
+    app.post('/users', async (req, res) => {
+      const user = req.body;
+      const query = { email: user.email }
+      const exitsUser = await userCollection.findOne(query)
+      if (exitsUser) {
+        return res.send({message:'user already exits'} );
+      }
+      else {
+        const result = await userCollection.insertOne(query)
+        res.send(result)
+      }
+})
+    
 
     // food items  menu 
     app.get('/menu', async (req, res) => {
